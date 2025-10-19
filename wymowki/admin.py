@@ -1,19 +1,22 @@
 from django.contrib import admin
-from .models import Wymowka
+from .models import Wymowka, Kategoria, Ocena
 
-# Tworzymy klasę konfiguracyjną dla panelu admina
+class KategoriaAdmin(admin.ModelAdmin):
+    list_display = ('nazwa', 'opis')
+    search_fields = ('nazwa',)
+
 class WymowkaAdmin(admin.ModelAdmin):
-    # Pola, które mają być wyświetlane na liście wymówek
-    list_display = ('tresc', 'glosy', 'data_dodania')
-    
-    # Dodaje pole wyszukiwania (będzie szukać w polu 'tresc')
-    search_fields = ('tresc',)
-    
-    # Dodaje panel filtrów po prawej stronie (będzie filtrować po dacie)
-    list_filter = ('data_dodania',)
-    
-    # Pola, które mają być tylko do odczytu podczas edycji
-    readonly_fields = ('data_dodania',)
+    list_display = ('tresc', 'kategoria', 'autor', 'glosy', 'data_dodania')
+    search_fields = ('tresc', 'autor__username')
+    list_filter = ('data_dodania', 'kategoria')
+    readonly_fields = ('data_dodania', 'glosy')
 
-# Rejestrujemy model Wymowka, ale używając naszej nowej klasy konfiguracyjnej
+class OcenaAdmin(admin.ModelAdmin):
+    list_display = ('wymowka', 'uzytkownik', 'wartosc', 'data')
+    list_filter = ('wartosc', 'data')
+    search_fields = ('wymowka__tresc', 'uzytkownik__username')
+    readonly_fields = ('data',)
+
+admin.site.register(Kategoria, KategoriaAdmin)
 admin.site.register(Wymowka, WymowkaAdmin)
+admin.site.register(Ocena, OcenaAdmin)

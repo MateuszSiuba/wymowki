@@ -1,0 +1,104 @@
+{% extends 'wymowki/base.html' %}
+
+{% block title %}Logowanie - Generator Wymówek{% endblock %}
+
+{% block extra_css %}
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+form p {
+    margin-bottom: 20px;
+}
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.errorlist {
+    color: #dc3545;
+    font-size: 13px;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+.przycisk {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.przycisk:hover { background-color: #0056b3; }
+.link-info {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+.link-info a { color: #007bff; text-decoration: none; }
+.link-info a:hover { text-decoration: underline; }
+.non-field-errors {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🔐 Logowanie</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="non-field-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+                {% for error in field.errors %}
+                    <ul class="errorlist">
+                        <li>{{ error }}</li>
+                    </ul>
+                {% endfor %}
+            </p>
+        {% endfor %}
+
+        <button type="submit" class="przycisk">Zaloguj się</button>
+    </form>
+
+    <div class="link-info">
+        Nie masz konta? <a href="{% url 'rejestracja' %}">Zarejestruj się tutaj</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,48 +1,140 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Generator Wymówek</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        h1 { color: #333; }
-        .wymowka-box {
-            border: 2px dashed #007bff;
-            padding: 30px;
-            margin: 30px auto;
-            width: 80%;
-            max-width: 600px;
-            background-color: #f9f9f9;
-        }
-        .przycisk {
-            display: inline-block;
-            padding: 15px 30px;
-            font-size: 18px;
-            color: white;
-            background-color: #007bff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
+{% extends 'wymowki/base.html' %}
+
+{% block title %}Generator Wymówek Studenckich{% endblock %}
+
+{% block extra_css %}
+.container {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+}
+h1 {
+    color: #333;
+}
+.wymowka-box {
+    border: 2px dashed #007bff;
+    padding: 30px;
+    margin: 30px auto;
+    width: 80%;
+    max-width: 600px;
+    background-color: white;
+    position: relative;
+    border-radius: 8px;
+}
+.kategoria-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+.przycisk {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+}
+.przycisk:hover {
+    background-color: #0056b3;
+}
+.przycisk.green {
+    background-color: #28a745;
+}
+.przycisk.green:hover {
+    background-color: #1e7e34;
+}
+.vote-buttons {
+    margin-top: 15px;
+}
+.vote-btn {
+    font-size: 24px;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    text-decoration: none;
+    display: inline-block;
+}
+.vote-btn:hover {
+    background-color: #e0e0e0;
+}
+.filters {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: white;
+    border-radius: 5px;
+}
+.filters select, .filters input {
+    padding: 8px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+{% endblock %}
+
+{% block content %}
+<div class="container">
     <h1>Generator Wymówek Studenckich 🎓</h1>
+
+    <div class="filters">
+        <form method="GET">
+            <select name="kategoria" onchange="this.form.submit()">
+                <option value="">Wszystkie kategorie</option>
+                {% for kat in kategorie %}
+                    <option value="{{ kat.id }}" {% if wybrana_kategoria == kat.id|stringformat:"s" %}selected{% endif %}>
+                        {{ kat.nazwa }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="text" name="szukaj" placeholder="Szukaj wymówki..." value="{{ szukaj }}">
+            <button type="submit" class="przycisk" style="padding: 8px 15px; font-size: 14px;">🔍 Szukaj</button>
+        </form>
+    </div>
 
     <div class="wymowka-box">
         {% if wymowka %}
+            {% if wymowka.kategoria %}
+                <span class="kategoria-badge">{{ wymowka.kategoria.nazwa }}</span>
+            {% endif %}
             <h2>{{ wymowka.tresc }}</h2>
-            <p>(Liczba głosów: {{ wymowka.glosy }})</p>
+            <p><strong>Liczba głosów: {{ wymowka.glosy }}</strong></p>
+            <p style="font-size: 12px; color: #666;">
+                Autor: {% if wymowka.autor %}{{ wymowka.autor.username }}{% else %}Anonim{% endif %} |
+                {{ wymowka.data_dodania|date:"d.m.Y H:i" }}
+            </p>
+
+            {% if user.is_authenticated %}
+                <div class="vote-buttons">
+                    <a href="{% url 'ocen_wymowke' wymowka.id 1 %}" class="vote-btn" title="Lubię to">👍</a>
+                    <a href="{% url 'ocen_wymowke' wymowka.id -1 %}" class="vote-btn" title="Nie lubię">👎</a>
+                </div>
+            {% else %}
+                <p style="font-size: 14px; color: #666;">
+                    <a href="{% url 'logowanie' %}">Zaloguj się</a>, aby oceniać wymówki
+                </p>
+            {% endif %}
         {% else %}
-            <p>Brak wymówek w bazie! Dodaj coś w panelu admina.</p>
+            <p>Brak wymówek spełniających kryteria!</p>
         {% endif %}
     </div>
 
-    <a href="" class="przycisk">Losuj następną!</a>
-        
-        <a href="{% url 'dodaj_wymowke' %}" class="przycisk" style="background-color: #28a745; margin-left: 10px;">
-            Dodaj nową
-        </a>
-    </body>
-    </html>
-</body>
-</html>
+    <a href="?" class="przycisk">🎲 Losuj następną!</a>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'dodaj_wymowke' %}" class="przycisk green">➕ Dodaj nową</a>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,102 @@
+{% extends 'wymowki/base.html' %}
+
+{% block title %}Rejestracja - Generator Wymówek{% endblock %}
+
+{% block extra_css %}
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+form p {
+    margin-bottom: 20px;
+}
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.helptext {
+    font-size: 12px;
+    color: #666;
+    display: block;
+    margin-top: 5px;
+}
+.errorlist {
+    color: #dc3545;
+    font-size: 13px;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+.przycisk {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.przycisk:hover { background-color: #1e7e34; }
+.link-info {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+.link-info a { color: #007bff; text-decoration: none; }
+.link-info a:hover { text-decoration: underline; }
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>📝 Rejestracja</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <span class="helptext">{{ field.help_text }}</span>
+                {% endif %}
+                {% for error in field.errors %}
+                    <ul class="errorlist">
+                        <li>{{ error }}</li>
+                    </ul>
+                {% endfor %}
+            </p>
+        {% endfor %}
+
+        <button type="submit" class="przycisk">Zarejestruj się</button>
+    </form>
+
+    <div class="link-info">
+        Masz już konto? <a href="{% url 'logowanie' %}">Zaloguj się tutaj</a>
+    </div>
+</div>
+{% endblock %}
+
