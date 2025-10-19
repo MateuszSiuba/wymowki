@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Generator Wymówek</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        h1 { color: #333; }
+        .wymowka-box {
+            border: 2px dashed #007bff;
+            padding: 30px;
+            margin: 30px auto;
+            width: 80%;
+            max-width: 600px;
+            background-color: #f9f9f9;
+        }
+        .przycisk {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generator Wymówek Studenckich 🎓</h1>
+
+    <div class="wymowka-box">
+        {% if wymowka %}
+            <h2>{{ wymowka.tresc }}</h2>
+            <p>(Liczba głosów: {{ wymowka.glosy }})</p>
+        {% else %}
+            <p>Brak wymówek w bazie! Dodaj coś w panelu admina.</p>
+        {% endif %}
+    </div>
+
+    <a href="" class="przycisk">Losuj następną!</a>
+        
+        <a href="{% url 'dodaj_wymowke' %}" class="przycisk" style="background-color: #28a745; margin-left: 10px;">
+            Dodaj nową
+        </a>
+    </body>
+    </html>
+</body>
+</html>

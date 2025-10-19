@@ -1,0 +1,10 @@
+# Środowisko wirtualne
+venv/
+
+# Pliki cache Pythona
+__pycache__/
+*.pyc
+
+# Pliki konfiguracyjne IDE (opcjonalnie, ale dobra praktyka)
+.vscode/
+.idea/

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj Wymówkę</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        h1 { color: #333; }
+        form {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            background-color: #f9f9f9;
+        }
+        form p {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        form textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box; /* Ważne dla textarea */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .przycisk {
+            padding: 10px 25px;
+            font-size: 16px;
+            color: white;
+            background-color: #28a745; /* Zielony */
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .link-powrotny {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dodaj nową wymówkę</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" class="przycisk">Dodaj!</button>
+    </form>
+    
+    <a href="{% url 'strona_glowna' %}" class="link-powrotny">Wróć do generatora</a>
+</body>
+</html>
