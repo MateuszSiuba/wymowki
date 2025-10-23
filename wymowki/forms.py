@@ -2,17 +2,20 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import Wymowka, Kategoria
+from .models import Komentarz
 
 class WymowkaForm(forms.ModelForm):
     class Meta:
         model = Wymowka
-        fields = ['tresc', 'kategoria']
+        fields = ['tresc', 'kategoria', 'tags']
         labels = {
             'tresc': 'Wpisz treść swojej wymówki',
-            'kategoria': 'Kategoria'
+            'kategoria': 'Kategoria',
+            'tags': 'Tagi (oddzielone przecinkami)'
         }
         widgets = {
             'tresc': forms.Textarea(attrs={'placeholder': 'Np. "Pies zjadł mi notatki..."', 'rows': 4}),
+            'tags': forms.TextInput(attrs={'placeholder': 'np. autobus, korek, spóźnienie'}),
         }
 
 class RejestracjaForm(UserCreationForm):
@@ -30,3 +33,19 @@ class RejestracjaForm(UserCreationForm):
 class LogowanieForm(AuthenticationForm):
     username = forms.CharField(label='Nazwa użytkownika')
     password = forms.CharField(label='Hasło', widget=forms.PasswordInput)
+
+
+class KomentarzForm(forms.ModelForm):
+    class Meta:
+        model = Komentarz
+        fields = ['tresc']
+        labels = {
+            'tresc': 'Twój komentarz (max 500 znaków)',
+        }
+        widgets = {
+            'tresc': forms.Textarea(attrs={
+                'placeholder': 'Wpisz swoje spostrzeżenia tutaj...', 
+                'rows': 3, 
+                'maxlength': 500
+            }),
+        }

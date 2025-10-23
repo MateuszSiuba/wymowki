@@ -1,0 +1,104 @@
+{% extends 'wymowki/base.html' %}
+
+{% block title %}Szczegóły wymówki: {{ wymowka_szczegoly.tresc|truncatechars:30 }}{% endblock %}
+
+{% block extra_css %}
+.container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h1 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+.wymowka-tresc { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+.meta-info { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+h2 { border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px; }
+
+.komentarz-box { 
+    border: 1px solid #ddd; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    border-radius: 5px; 
+    background-color: #f9f9f9;
+}
+.komentarz-autor { font-weight: bold; color: #333; }
+.komentarz-data { font-size: 12px; color: #999; margin-left: 10px; }
+.form-komentarz { margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; background-color: #fff; }
+.form-komentarz textarea { width: 100%; height: 80px; padding: 10px; box-sizing: border-box; }
+
+.przycisk {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.przycisk:hover { background-color: #1e7e34; }
+.vote-buttons a {
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+    border: 1px solid #ccc;
+}
+.vote-buttons a[title="Lubię to"] { background-color: #d4edda; color: #155724; }
+.vote-buttons a[title="Nie lubię"] { background-color: #f8d7da; color: #721c24; }
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Szczegóły i Komentarze</h1>
+    
+    <div class="wymowka-tresc">{{ wymowka_szczegoly.tresc }}</div>
+    
+    <div class="meta-info">
+        Kategoria: {{ wymowka_szczegoly.kategoria.nazwa|default:"Brak" }} | 
+        Autor: {{ wymowka_szczegoly.autor.username|default:"Anonim" }} | 
+        Głosy: {{ wymowka_szczegoly.glosy }}
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="vote-buttons" style="margin-bottom: 20px;">
+            <a href="{% url 'ocen_wymowke' wymowka_szczegoly.id 1 %}" class="vote-btn" title="Lubię to">👍 Głosuj na TAK</a>
+            <a href="{% url 'ocen_wymowke' wymowka_szczegoly.id -1 %}" class="vote-btn" title="Nie lubię">👎 Głosuj na NIE</a>
+        </div>
+    {% else %}
+        <p>Musisz być <a href="{% url 'logowanie' %}">zalogowany</a>, aby oceniać i komentować.</p>
+    {% endif %}
+
+    <h2>Komentarze ({{ komentarze|length }})</h2>
+
+    {% for komentarz in komentarze %}
+        <div class="komentarz-box">
+            <span class="komentarz-autor">{{ komentarz.autor.username }}</span> 
+            <span class="komentarz-data">{{ komentarz.data_dodania|date:"d M Y H:i" }}</span>
+            <p>{{ komentarz.tresc }}</p>
+        </div>
+    {% empty %}
+        <p>Brak komentarzy. Bądź pierwszy!</p>
+    {% endfor %}
+
+    {% if request.user.is_authenticated %}
+        <div class="form-komentarz">
+            <h3>Dodaj komentarz</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ komentarz_form.as_p }} 
+                <button type="submit" class="przycisk">Dodaj komentarz</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <p style="margin-top: 30px;"><a href="{% url 'ranking' %}">Wróć do pełnego rankingu</a></p>
+</div>
+{% endblock %}

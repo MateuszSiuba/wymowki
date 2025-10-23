@@ -2,8 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Wymowka, Kategoria, Ocena
-from .forms import WymowkaForm, RejestracjaForm, LogowanieForm
+from .models import Wymowka, Kategoria, Ocena, Komentarz
+from .forms import WymowkaForm, RejestracjaForm, LogowanieForm, KomentarzForm
+from django.urls import reverse
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 def strona_glowna(request):
     kategoria_id = request.GET.get('kategoria')
@@ -45,24 +49,51 @@ def dodaj_wymowke(request):
         'form': form
     }
     return render(request, 'wymowki/dodaj_wymowke.html', context)
+    pass
+
 
 def ranking(request):
-    kategoria_id = request.GET.get('kategoria')
+    wymowka_id = request.GET.get('wymowka')
+    
+    if wymowka_id:
+        wymowka = get_object_or_404(Wymowka, pk=wymowka_id)
+        komentarze = Komentarz.objects.filter(wymowka=wymowka).select_related('autor')
+        
+        komentarz_form = KomentarzForm()
+        
+        if request.method == 'POST' and request.user.is_authenticated:
+            komentarz_form = KomentarzForm(request.POST)
+            if komentarz_form.is_valid():
+                nowy_komentarz = komentarz_form.save(commit=False)
+                nowy_komentarz.wymowka = wymowka
+                nowy_komentarz.autor = request.user
+                nowy_komentarz.save()
+                messages.success(request, "Twój komentarz został dodany!")
+                return redirect(reverse('ranking') + f'?wymowka={wymowka.id}')
 
-    wymowki = Wymowka.objects.all()
+        context = {
+            'wymowka_szczegoly': wymowka,
+            'komentarze': komentarze,
+            'komentarz_form': komentarz_form,
+        }
+        return render(request, 'wymowki/ranking_szczegoly.html', context)
+
+    kategoria_id = request.GET.get('kategoria')
+    
+    wymowki = Wymowka.objects.all().order_by('-glosy')[:20] 
 
     if kategoria_id:
-        wymowki = wymowki.filter(kategoria_id=kategoria_id)
-
-    top_wymowki = wymowki.order_by('-glosy')[:20]
+        wymowki = wymowki.filter(kategoria_id=kategoria_id).order_by('-glosy')[:20]
+        
     kategorie = Kategoria.objects.all()
 
     context = {
-        'wymowki': top_wymowki,
+        'wymowki': wymowki,
         'kategorie': kategorie,
         'wybrana_kategoria': kategoria_id,
     }
     return render(request, 'wymowki/ranking.html', context)
+
 
 @login_required
 def ocen_wymowke(request, wymowka_id, wartosc):
@@ -132,3 +163,19 @@ def wylogowanie(request):
     logout(request)
     messages.info(request, 'Zostałeś wylogowany.')
     return redirect('strona_glowna')
+
+def export_pdf(request):
+    wymowki = Wymowka.objects.all().order_by('-glosy')[:20]
+
+    context = {
+        'wymowki': wymowki
+    }
+
+    html_string = render_to_string('wymowki/pdf_template.html', context)
+    
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="ranking_wymowek.pdf"'
+    
+    return response

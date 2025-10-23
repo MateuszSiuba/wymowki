@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Wymowka, Kategoria, Ocena
+from .models import Wymowka, Kategoria, Ocena, Komentarz
 
 class KategoriaAdmin(admin.ModelAdmin):
     list_display = ('nazwa', 'opis')
@@ -17,6 +17,13 @@ class OcenaAdmin(admin.ModelAdmin):
     search_fields = ('wymowka__tresc', 'uzytkownik__username')
     readonly_fields = ('data',)
 
+class KomentarzAdmin(admin.ModelAdmin):
+    list_display = ('wymowka', 'autor', 'data_dodania', 'tresc')
+    list_filter = ('data_dodania', 'autor')
+    search_fields = ('tresc', 'autor__username', 'wymowka__tresc')
+    readonly_fields = ('data_dodania',)
+
 admin.site.register(Kategoria, KategoriaAdmin)
 admin.site.register(Wymowka, WymowkaAdmin)
 admin.site.register(Ocena, OcenaAdmin)
+admin.site.register(Komentarz, KomentarzAdmin)
