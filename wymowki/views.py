@@ -7,7 +7,8 @@ from .forms import WymowkaForm, RejestracjaForm, LogowanieForm, KomentarzForm
 from django.urls import reverse
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML
+from io import BytesIO
+from xhtml2pdf import pisa
 
 def strona_glowna(request):
     kategoria_id = request.GET.get('kategoria')
@@ -80,10 +81,12 @@ def ranking(request):
 
     kategoria_id = request.GET.get('kategoria')
     
-    wymowki = Wymowka.objects.all().order_by('-glosy')[:20] 
-
+    wymowki = Wymowka.objects.all()
+    
     if kategoria_id:
-        wymowki = wymowki.filter(kategoria_id=kategoria_id).order_by('-glosy')[:20]
+        wymowki = wymowki.filter(kategoria_id=kategoria_id)
+    
+    wymowki = wymowki.order_by('-glosy')[:20]
         
     kategorie = Kategoria.objects.all()
 
@@ -173,9 +176,15 @@ def export_pdf(request):
 
     html_string = render_to_string('wymowki/pdf_template.html', context)
     
-    pdf_file = HTML(string=html_string).write_pdf()
-
-    response = HttpResponse(pdf_file, content_type='application/pdf')
+    # Tworzenie PDF za pomocą xhtml2pdf
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html_string.encode('UTF-8')), result)
+    
+    if pdf.err:
+        messages.error(request, 'Wystąpił błąd podczas generowania PDF.')
+        return redirect('ranking')
+    
+    response = HttpResponse(result.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ranking_wymowek.pdf"'
     
     return response
