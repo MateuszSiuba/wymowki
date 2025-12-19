@@ -9,6 +9,12 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from io import BytesIO
 from xhtml2pdf import pisa
+import os
+from django.conf import settings
+from django.contrib.staticfiles import finders
+import base64
+from reportlab.pdfbase import pdfmetrics      
+from reportlab.pdfbase.ttfonts import TTFont
 
 def strona_glowna(request):
     kategoria_id = request.GET.get('kategoria')
@@ -167,22 +173,56 @@ def wylogowanie(request):
     messages.info(request, 'Zostałeś wylogowany.')
     return redirect('strona_glowna')
 
+
+def link_callback(uri, rel):
+
+    sciezka_do_fontu = r"C:\Users\patry\wymowki\wymowki\static\wymowki\fonts\polski.ttf"
+
+    if uri.endswith('.ttf'):
+        if os.path.isfile(sciezka_do_fontu):
+            return sciezka_do_fontu
+        else:
+            print(f"XHTML2PDF ERROR: Plik fizycznie nie istnieje w: {sciezka_do_fontu}")
+            return None
+
+    if uri.startswith(settings.MEDIA_URL):
+        path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
+    elif uri.startswith(settings.STATIC_URL):
+        relative_path = uri.replace(settings.STATIC_URL, "")
+        path = finders.find(relative_path)
+        if not path and hasattr(settings, 'STATIC_ROOT') and settings.STATIC_ROOT:
+            path = os.path.join(settings.STATIC_ROOT, relative_path)
+    else:
+        path = uri
+
+    return path
+
 def export_pdf(request):
     wymowki = Wymowka.objects.all().order_by('-glosy')[:20]
 
+    sciezka_font = r"C:\Users\patry\wymowki\wymowki\static\wymowki\fonts\DejaVuSans.ttf"
+    
+    try:
+        pdfmetrics.registerFont(TTFont('PolskiFont', sciezka_font))
+    except Exception as e:
+        print(f"BŁĄD REJESTRACJI CZCIONKI: {e}")
+
     context = {
-        'wymowki': wymowki
+        'wymowki': wymowki,
     }
 
     html_string = render_to_string('wymowki/pdf_template.html', context)
     
-    # Tworzenie PDF za pomocą xhtml2pdf
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html_string.encode('UTF-8')), result)
+    
+    pdf = pisa.pisaDocument(
+        BytesIO(html_string.encode("UTF-8")), 
+        result,
+        link_callback=link_callback 
+    )
     
     if pdf.err:
-        messages.error(request, 'Wystąpił błąd podczas generowania PDF.')
-        return redirect('ranking')
+        return HttpResponse(f"Wystąpił błąd przy generowaniu PDF: {pdf.err}", status=500)
     
     response = HttpResponse(result.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ranking_wymowek.pdf"'

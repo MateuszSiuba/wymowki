@@ -1,0 +1,439 @@
+/* === OGÓLNE === */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: transparent;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* === NAVBAR (MENU) === */
+.navbar {
+    background-color: #007bff;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Kluczowe dla RWD */
+}
+
+.navbar a {
+    color: white;
+    margin: 0 10px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #0056b3;
+}
+
+.navbar .user-info {
+    color: white;
+}
+
+/* === WIADOMOŚCI SYSTEMOWE === */
+.messages {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.message {
+    padding: 12px 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.message.info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+/* === STRONA GŁÓWNA & WYMÓWKA BOX === */
+.wymowka-box {
+    border: 2px dashed #007bff;
+    padding: 30px;
+    margin: 30px auto;
+    width: 90%;
+    max-width: 600px;
+    background-color: white;
+    position: relative;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.kategoria-badge {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    background-color: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+/* === PRZYCISKI === */
+.przycisk {
+    display: inline-block;
+    padding: 12px 25px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.przycisk:hover { background-color: #0056b3; }
+.przycisk.green { background-color: #28a745; }
+.przycisk.green:hover { background-color: #1e7e34; }
+
+/* === FILTRY I FORMULARZE === */
+.filters {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: white;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filters select, .filters input, form textarea, form select, form input[type="text"], form input[type="password"], form input[type="email"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+/* Poprawka dla inputów w filtrach */
+.filters input, .filters select {
+    flex: 1 1 200px;
+}
+
+/* === FORMULARZE (Logowanie, Rejestracja, Dodawanie) === */
+.form-container {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.form-container input, .form-container textarea {
+    width: 100%;
+    box-sizing: border-box; 
+}
+.errorlist {
+    color: #dc3545;
+    list-style: none;
+    padding: 0;
+    font-size: 0.9em;
+}
+
+.form-komentarz {
+    text-align: center; 
+}
+
+.form-komentarz form p {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.form-komentarz label {
+    display: block; 
+    font-weight: bold;
+    margin-bottom: 8px; 
+    color: #333;
+}
+
+.form-komentarz textarea {
+    width: 100%;
+    box-sizing: border-box; 
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit; 
+    min-height: 100px; 
+    resize: vertical; 
+}
+
+.form-komentarz button[type="submit"] {
+    margin-top: 10px;
+    padding: 12px 40px; 
+}
+
+/* === RANKING === */
+.wymowka-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.rank {
+    background-color: #ffc107;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 18px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+.rank.top3 { background-color: #ff6b6b; color: white; }
+
+.wymowka-content {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.wymowka-content h3 {
+    margin: 0 0 10px 0;
+    text-align: left;
+}
+
+.votes {
+    text-align: center;
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-left: 1px solid #eee;
+    padding-left: 15px;
+}
+.votes-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.vote-buttons { margin-top: 5px; white-space: nowrap; }
+.vote-btn {
+    font-size: 20px;
+    padding: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.vote-btn:hover { background-color: #eee; }
+
+/* === KOMENTARZE === */
+.komentarz-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+.komentarz-autor { font-weight: bold; color: #333; }
+.komentarz-data { font-size: 12px; color: #999; margin-left: 10px; }
+
+/* === SZCZEGÓŁY WYMÓWKI (ranking_szczegoly.html) === */
+
+/* Biała karta z cieniem dla głównej treści */
+.detail-card {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+/* Wielki tekst wymówki */
+.wymowka-tresc {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* Informacje dodatkowe (szare) */
+.meta-info {
+    color: #666;
+    font-size: 14px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    margin: 20px 0;
+    display: inline-block; /* Żeby ramki nie były na całą szerokość */
+    width: 100%;
+}
+
+/* Sekcja dodawania komentarza */
+.form-komentarz {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 30px;
+    border: 1px solid #ddd;
+}
+.form-komentarz h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+/* Lista komentarzy */
+.komentarze-lista {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.komentarz-box {
+    background-color: white;
+    border-left: 4px solid #007bff; /* Niebieski pasek z lewej */
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    text-align: left; /* Komentarze czytamy od lewej */
+}
+
+.komentarz-header {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.komentarz-autor {
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+
+.komentarz-data {
+    color: #999;
+    font-size: 0.85em;
+}
+
+.komentarz-tekst {
+    color: #444;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Przycisk powrotu */
+.link-powrot {
+    display: inline-block;
+    margin-top: 20px;
+    color: #666;
+    text-decoration: underline;
+}
+.link-powrot:hover {
+    color: #333;
+}
+
+/* === RESPONSYWNOŚĆ (Media Queries) === */
+@media (max-width: 768px) {
+    /* Navbar pionowy na telefonach */
+    .navbar {
+        flex-direction: column;
+        text-align: center;
+    }
+    .navbar div {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+    .navbar .user-info {
+        border-top: 1px solid rgba(255,255,255,0.3);
+        padding-top: 10px;
+        width: 100%;
+    }
+
+    /* Ranking na telefonach */
+    .wymowka-item {
+        flex-direction: column;
+        padding: 15px;
+    }
+    .wymowka-content {
+        margin: 15px 0;
+        width: 100%;
+    }
+    .votes {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+        padding-left: 0;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .kategoria-badge {
+        position: static; /* Badge nie lata luzem na mobile */
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+    
+    /* Formularze i kontenery */
+    .container, .form-container, .wymowka-box {
+        width: 95%;
+        padding: 15px;
+        margin: 10px auto;
+    }
+    
+    .przycisk {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .filters {
+        flex-direction: column;
+    }
+    .filters button {
+        width: 100%;
+    }
+    .text-center {
+        text-align: center;
+    }
+}
